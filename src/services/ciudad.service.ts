@@ -1,6 +1,7 @@
 import { ciudadRepository } from '@/repositories/ciudad.repository';
 import { AppError } from '@/lib/errors';
 import { CreateCiudadDTO, UpdateCiudadDTO } from '@/models/ciudad.model';
+import { geocodeCiudad } from '@/lib/climaMicroservicio';
 
 const findOwnedOrFail = async (id: number, idUsuario: number) => {
   const ciudad = await ciudadRepository.findById(id);
@@ -11,14 +12,20 @@ const findOwnedOrFail = async (id: number, idUsuario: number) => {
   return ciudad;
 };
 
-// TODO: reemplazar por la llamada real al microservicio de geolocalización
-// (ej. fetch a /geocode?nombre=...&pais=...) cuando esté listo.
-// Por ahora devuelve null y lat/lon quedan sin dato en la ciudad.
+// Si el microservicio no está configurado todavía, o si falla,
+// la ciudad se crea igual con lat/lon en null (columnas nullable por ahora).
 const resolveCoordinates = async (
-  nombre: string,
-  codigoPais: string
+  data: CreateCiudadDTO
 ): Promise<{ lat: number | null; lon: number | null }> => {
-  return { lat: null, lon: null };
+  if (!process.env.MICROSERVICIO_CLIMA_URL) {
+    return { lat: null, lon: null };
+  }
+  try {
+    return await geocodeCiudad(data);
+  } catch (error) {
+    console.error('Error obteniendo coordenadas:', error);
+    return { lat: null, lon: null };
+  }
 };
 
 export const ciudadService = {
@@ -30,7 +37,7 @@ export const ciudadService = {
       throw new AppError('codigoPais debe tener 2 caracteres (ej. MX, US)', 400);
     }
 
-    const { lat, lon } = await resolveCoordinates(data.nombre, data.codigoPais);
+    const { lat, lon } = await resolveCoordinates(data);
     return ciudadRepository.create(idUsuario, { ...data, lat, lon });
   },
 

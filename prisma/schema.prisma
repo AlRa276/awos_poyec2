@@ -29,6 +29,8 @@ model Ciudad {
   estado       String?  @db.VarChar(100)
   codigoPais   String   @map("codigo_pais") @db.Char(2)
   codigoPostal String?  @map("codigo_postal") @db.Char(10)
+  lat          Decimal? @db.Decimal(9, 6)
+  lon          Decimal? @db.Decimal(9, 6)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("update_at")
 

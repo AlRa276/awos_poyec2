@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { CreatePlanDTO, UpdatePlanDTO } from '@/models/plan.model';
 
 export const planRepository = {
-  create: (idUsuario: number, data: CreatePlanDTO) =>
+  create: (idUsuario: number, data: CreatePlanDTO & { climaEsperado: string | null }) =>
     prisma.planes.create({
       data: {
         ...data,
@@ -26,7 +26,7 @@ export const planRepository = {
 
   findById: (id: number) => prisma.planes.findUnique({ where: { id } }),
 
-  update: (id: number, data: UpdatePlanDTO) =>
+  update: (id: number, data: UpdatePlanDTO & { climaEsperado?: string | null }) =>
     prisma.planes.update({
       where: { id },
       data: {

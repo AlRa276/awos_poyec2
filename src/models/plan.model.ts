@@ -1,10 +1,9 @@
 export interface CreatePlanDTO {
   idCiudad: number;
   actividad: string;
-  fecha?: string;
+  fecha?: string; // formato ISO "YYYY-MM-DD"
   notas?: string;
   completado?: boolean;
-  climaEsperado?: string;
 }
 
 export type UpdatePlanDTO = Partial<CreatePlanDTO>;
