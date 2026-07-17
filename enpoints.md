@@ -201,6 +201,216 @@
 }
 ```
 
+## Ciudades
+
+### 6. Crear ciudad
+
+- Método: `POST`
+- Ruta: `/api/v1/ciudades`
+- Descripción: Crea una nueva ciudad asociada al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{
+  "nombre": "Guadalajara",
+  "estado": "Jalisco",
+  "codigoPais": "MX",
+  "codigoPostal": "44100"
+}
+```
+
+- Ejemplo de salida (éxito, 201):
+
+```json
+{
+  "code": 201,
+  "message": "CREATED",
+  "detail": "Ciudad \"Guadalajara\" creada correctamente",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "nombre": "Guadalajara",
+    "estado": "Jalisco",
+    "codigoPais": "MX",
+    "codigoPostal": "44100",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:30:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 401):
+
+```json
+{
+  "code": 401,
+  "message": "UNAUTHORIZED",
+  "detail": "No autorizado"
+}
+```
+
+### 7. Listar ciudades del usuario
+
+- Método: `GET`
+- Ruta: `/api/v1/ciudades`
+- Descripción: Devuelve todas las ciudades asociadas al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Se encontraron 1 ciudad(es)",
+  "data": [
+    {
+      "id": 1,
+      "idUsuario": 1,
+      "nombre": "Guadalajara",
+      "estado": "Jalisco",
+      "codigoPais": "MX",
+      "codigoPostal": "44100",
+      "createdAt": "2026-07-16T12:30:00.000Z",
+      "updatedAt": "2026-07-16T12:30:00.000Z"
+    }
+  ]
+}
+```
+
+- Ejemplo de salida (error, 401):
+
+```json
+{
+  "code": 401,
+  "message": "UNAUTHORIZED",
+  "detail": "No autorizado"
+}
+```
+
+### 8. Obtener una ciudad
+
+- Método: `GET`
+- Ruta: `/api/v1/ciudades/:id`
+- Descripción: Devuelve una ciudad específica si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Ciudad encontrada",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "nombre": "Guadalajara",
+    "estado": "Jalisco",
+    "codigoPais": "MX",
+    "codigoPostal": "44100",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:30:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre esta ciudad"
+}
+```
+
+### 9. Actualizar ciudad
+
+- Método: `PUT`
+- Ruta: `/api/v1/ciudades/:id`
+- Descripción: Actualiza una ciudad existente si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{
+  "nombre": "Zapopan",
+  "estado": "Jalisco",
+  "codigoPais": "MX",
+  "codigoPostal": "45100"
+}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Ciudad \"Zapopan\" actualizada correctamente",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "nombre": "Zapopan",
+    "estado": "Jalisco",
+    "codigoPais": "MX",
+    "codigoPostal": "45100",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:45:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre esta ciudad"
+}
+```
+
+### 10. Eliminar ciudad
+
+- Método: `DELETE`
+- Ruta: `/api/v1/ciudades/:id`
+- Descripción: Elimina una ciudad existente si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Se eliminó la ciudad con id 1",
+  "data": null
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre esta ciudad"
+}
+```
+
 ## Notas generales
 
 - Los endpoints protegidos requieren un token en el encabezado `Authorization: Bearer <token>` o una cookie `token` válida.
