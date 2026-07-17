@@ -34,10 +34,13 @@ export const authController = {
       const body = await req.json();
       const { token, usuario } = await authService.login(body);
 
-      const response = successResponse(usuario, {
-        status: 200,
-        detail: `Bienvenido de nuevo, ${usuario.name}`,
-      });
+      const response = successResponse(
+        { token, usuario },
+        {
+          status: 200,
+          detail: `Bienvenido de nuevo, ${usuario.name}`,
+        }
+      );
       response.cookies.set('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
