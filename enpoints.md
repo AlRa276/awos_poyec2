@@ -411,6 +411,225 @@
 }
 ```
 
+## Planes
+
+### 11. Crear plan
+
+- Método: `POST`
+- Ruta: `/api/v1/planes`
+- Descripción: Crea un nuevo plan asociado al usuario autenticado y a una ciudad específica.
+- Ejemplo de entrada:
+
+```json
+{
+  "idCiudad": 1,
+  "actividad": "Visitar el parque",
+  "fecha": "2026-07-20",
+  "notas": "Llevar agua",
+  "completado": false,
+  "climaEsperado": "Soleado"
+}
+```
+
+- Ejemplo de salida (éxito, 201):
+
+```json
+{
+  "code": 201,
+  "message": "CREATED",
+  "detail": "Plan \"Visitar el parque\" creado correctamente",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "idCiudad": 1,
+    "fecha": "2026-07-20",
+    "actividad": "Visitar el parque",
+    "notas": "Llevar agua",
+    "completado": false,
+    "climaEsperado": "Soleado",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:30:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 401):
+
+```json
+{
+  "code": 401,
+  "message": "UNAUTHORIZED",
+  "detail": "No autorizado"
+}
+```
+
+### 12. Listar planes
+
+- Método: `GET`
+- Ruta: `/api/v1/planes`
+- Descripción: Devuelve los planes del usuario autenticado. También puede filtrar por ciudad usando el query param `idCiudad`.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Se encontraron 1 plan(es)",
+  "data": [
+    {
+      "id": 1,
+      "idUsuario": 1,
+      "idCiudad": 1,
+      "fecha": "2026-07-20",
+      "actividad": "Visitar el parque",
+      "notas": "Llevar agua",
+      "completado": false,
+      "climaEsperado": "Soleado",
+      "createdAt": "2026-07-16T12:30:00.000Z",
+      "updatedAt": "2026-07-16T12:30:00.000Z"
+    }
+  ]
+}
+```
+
+- Ejemplo de salida (error, 401):
+
+```json
+{
+  "code": 401,
+  "message": "UNAUTHORIZED",
+  "detail": "No autorizado"
+}
+```
+
+### 13. Obtener un plan
+
+- Método: `GET`
+- Ruta: `/api/v1/planes/:id`
+- Descripción: Devuelve un plan específico si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Plan encontrado",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "idCiudad": 1,
+    "fecha": "2026-07-20",
+    "actividad": "Visitar el parque",
+    "notas": "Llevar agua",
+    "completado": false,
+    "climaEsperado": "Soleado",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:30:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre este plan"
+}
+```
+
+### 14. Actualizar plan
+
+- Método: `PUT`
+- Ruta: `/api/v1/planes/:id`
+- Descripción: Actualiza un plan existente si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{
+  "actividad": "Visitar el zoológico",
+  "completado": true,
+  "notas": "Confirmar horario"
+}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Plan \"Visitar el zoológico\" actualizado correctamente",
+  "data": {
+    "id": 1,
+    "idUsuario": 1,
+    "idCiudad": 1,
+    "fecha": "2026-07-20",
+    "actividad": "Visitar el zoológico",
+    "notas": "Confirmar horario",
+    "completado": true,
+    "climaEsperado": "Soleado",
+    "createdAt": "2026-07-16T12:30:00.000Z",
+    "updatedAt": "2026-07-16T12:45:00.000Z"
+  }
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre este plan"
+}
+```
+
+### 15. Eliminar plan
+
+- Método: `DELETE`
+- Ruta: `/api/v1/planes/:id`
+- Descripción: Elimina un plan existente si pertenece al usuario autenticado.
+- Ejemplo de entrada:
+
+```json
+{}
+```
+
+- Ejemplo de salida (éxito, 200):
+
+```json
+{
+  "code": 200,
+  "message": "OK",
+  "detail": "Se eliminó el plan con id 1",
+  "data": null
+}
+```
+
+- Ejemplo de salida (error, 403):
+
+```json
+{
+  "code": 403,
+  "message": "FORBIDDEN",
+  "detail": "No tienes permiso sobre este plan"
+}
+```
+
 ## Notas generales
 
 - Los endpoints protegidos requieren un token en el encabezado `Authorization: Bearer <token>` o una cookie `token` válida.
