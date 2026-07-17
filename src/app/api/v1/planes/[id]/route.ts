@@ -1,11 +1,17 @@
 import { NextRequest } from 'next/server';
 import { planController } from '@/controllers/plan.controller';
 
-export const GET = (req: NextRequest, { params }: { params: { id: string } }) =>
-  planController.getOne(req, Number(params.id));
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  return planController.getOne(req, Number(id));
+};
 
-export const PUT = (req: NextRequest, { params }: { params: { id: string } }) =>
-  planController.update(req, Number(params.id));
+export const PUT = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  return planController.update(req, Number(id));
+};
 
-export const DELETE = (req: NextRequest, { params }: { params: { id: string } }) =>
-  planController.delete(req, Number(params.id));
+export const DELETE = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  return planController.delete(req, Number(id));
+};
