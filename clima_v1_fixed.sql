@@ -35,8 +35,9 @@ CREATE TABLE planes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   id_usuario INT NOT NULL,
   id_ciudad INT NOT NULL,
-  fecha DATE,
+  fecha DATE NOT NULL,
   actividad VARCHAR(100) NOT NULL,
+  actividad_normalizada VARCHAR(100) NOT NULL,
   notas VARCHAR(100),
   completado BOOLEAN DEFAULT FALSE,
   clima_esperado VARCHAR(50),
@@ -47,7 +48,9 @@ CREATE TABLE planes (
     ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fk_planes_ciudad FOREIGN KEY (id_ciudad)
     REFERENCES ciudad(id)
-    ON UPDATE CASCADE ON DELETE CASCADE
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT uq_plan_usuario_ciudad_actividad_fecha
+    UNIQUE (id_usuario, id_ciudad, actividad_normalizada, fecha)
 );
 
 CREATE TABLE token_revocado (

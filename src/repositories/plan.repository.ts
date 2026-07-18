@@ -2,12 +2,15 @@ import { prisma } from '@/lib/prisma';
 import { CreatePlanDTO, UpdatePlanDTO } from '@/models/plan.model';
 
 export const planRepository = {
-  create: (idUsuario: number, data: CreatePlanDTO & { climaEsperado: string | null }) =>
+  create: (
+    idUsuario: number,
+    data: CreatePlanDTO & { climaEsperado: string | null; actividadNormalizada: string }
+  ) =>
     prisma.planes.create({
       data: {
         ...data,
         idUsuario,
-        fecha: data.fecha ? new Date(data.fecha) : undefined,
+        fecha: new Date(data.fecha),
       },
     }),
 
@@ -26,7 +29,28 @@ export const planRepository = {
 
   findById: (id: number) => prisma.planes.findUnique({ where: { id } }),
 
-  update: (id: number, data: UpdatePlanDTO & { climaEsperado?: string | null }) =>
+  // excludeId se usa en update, para no marcar el plan como duplicado de sí mismo
+  findDuplicate: (
+    idUsuario: number,
+    idCiudad: number,
+    actividadNormalizada: string,
+    fecha: string,
+    excludeId?: number
+  ) =>
+    prisma.planes.findFirst({
+      where: {
+        idUsuario,
+        idCiudad,
+        actividadNormalizada,
+        fecha: new Date(fecha),
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+    }),
+
+  update: (
+    id: number,
+    data: UpdatePlanDTO & { climaEsperado?: string | null; actividadNormalizada?: string }
+  ) =>
     prisma.planes.update({
       where: { id },
       data: {
