@@ -18,13 +18,17 @@ CREATE TABLE ciudad (
   estado VARCHAR(100),
   codigo_pais CHAR(2) NOT NULL,
   codigo_postal CHAR(10),
+  nombre_normalizado VARCHAR(100) NOT NULL,
+  estado_normalizado VARCHAR(100) NOT NULL DEFAULT '',
   lat DECIMAL(9,6),
   lon DECIMAL(9,6),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_ciudad_usuario FOREIGN KEY (id_usuario)
     REFERENCES usuario(id)
-    ON UPDATE CASCADE ON DELETE CASCADE
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT uq_ciudad_usuario_nombre_estado
+    UNIQUE (id_usuario, nombre_normalizado, estado_normalizado, codigo_pais)
 );
 
 CREATE TABLE planes (

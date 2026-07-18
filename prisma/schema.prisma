@@ -23,20 +23,23 @@ model Usuario {
 }
 
 model Ciudad {
-  id           Int      @id @default(autoincrement())
-  idUsuario    Int      @map("id_usuario")
-  nombre       String   @db.VarChar(100)
-  estado       String?  @db.VarChar(100)
-  codigoPais   String   @map("codigo_pais") @db.Char(2)
-  codigoPostal String?  @map("codigo_postal") @db.Char(10)
-  lat          Decimal? @db.Decimal(9, 6)
-  lon          Decimal? @db.Decimal(9, 6)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("update_at")
+  id                Int      @id @default(autoincrement())
+  idUsuario         Int      @map("id_usuario")
+  nombre            String   @db.VarChar(100)
+  estado            String?  @db.VarChar(100)
+  codigoPais        String   @map("codigo_pais") @db.Char(2)
+  codigoPostal      String?  @map("codigo_postal") @db.Char(10)
+  nombreNormalizado String   @map("nombre_normalizado") @db.VarChar(100)
+  estadoNormalizado String   @default("") @map("estado_normalizado") @db.VarChar(100)
+  lat               Decimal? @db.Decimal(9, 6)
+  lon               Decimal? @db.Decimal(9, 6)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("update_at")
 
   usuario Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Cascade, onUpdate: Cascade)
   planes  Planes[]
 
+  @@unique([idUsuario, nombreNormalizado, estadoNormalizado, codigoPais], name: "uq_ciudad_usuario_nombre_estado")
   @@map("ciudad")
 }
 
