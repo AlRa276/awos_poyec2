@@ -31,6 +31,10 @@ export function middleware(request: NextRequest) {
 }
 
 // Esto le dice a Next.js que este middleware controle automáticamente TODO lo que esté dentro de /api/v1
+// Cambia la configuración del matcher al final de tu archivo src/middleware.ts
 export const config = {
-  matcher: '/api/:path*',
-};
+    matcher: [
+      '/api/:path*',
+      '/api/v1/:path*'
+    ],
+  };
