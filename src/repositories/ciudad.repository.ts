@@ -38,6 +38,14 @@ export const ciudadRepository = {
       },
     }),
 
+  findByCodigoPostal: (idUsuario: number, codigoPostal: string, excludeId?: number) =>
+    prisma.ciudad.findFirst({
+      where: {
+        idUsuario,
+        codigoPostal,
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+    }),
   update: (
     id: number,
     data: UpdateCiudadDTO & { nombreNormalizado?: string; estadoNormalizado?: string }

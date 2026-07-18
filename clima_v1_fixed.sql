@@ -28,7 +28,9 @@ CREATE TABLE ciudad (
     REFERENCES usuario(id)
     ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT uq_ciudad_usuario_nombre_estado
-    UNIQUE (id_usuario, nombre_normalizado, estado_normalizado, codigo_pais)
+    UNIQUE (id_usuario, nombre_normalizado, estado_normalizado, codigo_pais),
+  CONSTRAINT uq_ciudad_usuario_codigo_postal
+    UNIQUE (id_usuario, codigo_postal)
 );
 
 CREATE TABLE planes (

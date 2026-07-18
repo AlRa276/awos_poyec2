@@ -40,6 +40,7 @@ model Ciudad {
   planes  Planes[]
 
   @@unique([idUsuario, nombreNormalizado, estadoNormalizado, codigoPais], name: "uq_ciudad_usuario_nombre_estado")
+  @@unique([idUsuario, codigoPostal], name: "uq_ciudad_usuario_codigo_postal")
   @@map("ciudad")
 }
 

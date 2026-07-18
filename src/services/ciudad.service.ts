@@ -20,6 +20,9 @@ const findOwnedOrFail = async (id: number, idUsuario: number) => {
 const duplicateMessage = (nombre: string, estado?: string | null) =>
   `Ya tienes registrada la ciudad "${nombre}"${estado ? ` en ${estado}` : ''}`;
 
+const duplicatePostalMessage = (codigoPostal: string) =>
+  `Ya tienes registrada una ciudad con el código postal ${codigoPostal}`;
+
 const resolveCoordinates = async (
   data: CreateCiudadDTO
 ): Promise<{ lat: number | null; lon: number | null }> => {
@@ -31,6 +34,39 @@ const resolveCoordinates = async (
   } catch (error) {
     console.error('Error obteniendo coordenadas:', error);
     return { lat: null, lon: null };
+  }
+};
+
+const assertNoDuplicado = async (
+  idUsuario: number,
+  nombreNormalizado: string,
+  estadoNormalizado: string,
+  codigoPais: string,
+  codigoPostal: string | undefined,
+  nombre: string,
+  estado: string | undefined,
+  excludeId?: number
+) => {
+  const duplicadaPorIdentidad = await ciudadRepository.findDuplicate(
+    idUsuario,
+    nombreNormalizado,
+    estadoNormalizado,
+    codigoPais,
+    excludeId
+  );
+  if (duplicadaPorIdentidad) {
+    throw new AppError(duplicateMessage(nombre, estado), 409);
+  }
+
+  if (codigoPostal) {
+    const duplicadaPorPostal = await ciudadRepository.findByCodigoPostal(
+      idUsuario,
+      codigoPostal,
+      excludeId
+    );
+    if (duplicadaPorPostal) {
+      throw new AppError(duplicatePostalMessage(codigoPostal), 409);
+    }
   }
 };
 
@@ -46,15 +82,15 @@ export const ciudadService = {
     const nombreNormalizado = normalizeText(data.nombre);
     const estadoNormalizado = normalizeText(data.estado);
 
-    const duplicada = await ciudadRepository.findDuplicate(
+    await assertNoDuplicado(
       idUsuario,
       nombreNormalizado,
       estadoNormalizado,
-      data.codigoPais
+      data.codigoPais,
+      data.codigoPostal,
+      data.nombre,
+      data.estado
     );
-    if (duplicada) {
-      throw new AppError(duplicateMessage(data.nombre, data.estado), 409);
-    }
 
     const { lat, lon } = await resolveCoordinates(data);
 
@@ -68,6 +104,11 @@ export const ciudadService = {
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        // El target del error nos dice cuál de los dos constraints chocó
+        const target = (error.meta?.target as string[] | undefined)?.join(',') ?? '';
+        if (target.includes('codigo_postal') && data.codigoPostal) {
+          throw new AppError(duplicatePostalMessage(data.codigoPostal), 409);
+        }
         throw new AppError(duplicateMessage(data.nombre, data.estado), 409);
       }
       throw error;
@@ -87,33 +128,40 @@ export const ciudadService = {
 
     const tocaIdentidad =
       data.nombre !== undefined || data.estado !== undefined || data.codigoPais !== undefined;
+    const tocaPostal = data.codigoPostal !== undefined;
 
-    if (!tocaIdentidad) {
+    if (!tocaIdentidad && !tocaPostal) {
       return ciudadRepository.update(id, data);
     }
 
     const nombre = data.nombre ?? ciudadActual.nombre;
     const estado = data.estado !== undefined ? data.estado : ciudadActual.estado;
     const codigoPais = data.codigoPais ?? ciudadActual.codigoPais;
+    const codigoPostal =
+      data.codigoPostal !== undefined ? data.codigoPostal : ciudadActual.codigoPostal;
 
     const nombreNormalizado = normalizeText(nombre);
     const estadoNormalizado = normalizeText(estado);
 
-    const duplicada = await ciudadRepository.findDuplicate(
+    await assertNoDuplicado(
       idUsuario,
       nombreNormalizado,
       estadoNormalizado,
       codigoPais,
+      codigoPostal ?? undefined,
+      nombre,
+      estado ?? undefined,
       id
     );
-    if (duplicada) {
-      throw new AppError(duplicateMessage(nombre, estado), 409);
-    }
 
     try {
       return await ciudadRepository.update(id, { ...data, nombreNormalizado, estadoNormalizado });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const target = (error.meta?.target as string[] | undefined)?.join(',') ?? '';
+        if (target.includes('codigo_postal') && codigoPostal) {
+          throw new AppError(duplicatePostalMessage(codigoPostal), 409);
+        }
         throw new AppError(duplicateMessage(nombre, estado), 409);
       }
       throw error;
