@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // 1. Configuramos las cabeceras CORS permitiendo tu localhost:3000
 const corsHeaders = {
-  'Access-Control-Allow-Origin': process.env.FRONTEND_URL || 'http://localhost:3000',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
-
+    'Access-Control-Allow-Origin': process.env.FRONTEND_URL || 'http://localhost:3000',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true', // 👈 ¡ESTA ES LA LÍNEA QUE DEBES AGREGAR!
+  };
 // 2. Agregamos el método OPTIONS para responder al preflight del navegador
 export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
