@@ -79,4 +79,14 @@ export const ciudadController = {
       return handleError(error);
     }
   },
+
+  climaActual: async (req: NextRequest, id: number) => {
+    try {
+      const { payload } = await requireAuth(req);
+      const clima = await ciudadService.getClimaActual(id, payload.id);
+      return successResponse(clima, { status: 200, detail: 'Clima actual obtenido' });
+    } catch (error) {
+      return handleError(error);
+    }
+  },
 };

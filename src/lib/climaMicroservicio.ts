@@ -75,3 +75,33 @@ export const getPronostico = async (data: ForecastInput): Promise<ForecastOutput
   }
   return { climaEsperado: json.climaEsperado };
 };
+
+export interface CurrentInput {
+  lat: number;
+  lon: number;
+}
+
+export interface CurrentOutput {
+  temp: number;
+  description: string;
+  condition: 'Clear' | 'Rain' | 'Clouds' | 'Snow' | 'Thunderstorm';
+  humidity: number;
+}
+
+export const getClimaActual = async (data: CurrentInput): Promise<CurrentOutput> => {
+  const res = await fetchWithTimeout(`${BASE_URL}/current`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new AppError('No se pudo obtener el clima actual', 502);
+  }
+
+  const json = await res.json();
+  if (typeof json.temp !== 'number' || typeof json.condition !== 'string') {
+    throw new AppError('Respuesta inválida del microservicio de clima actual', 502);
+  }
+  return json;
+};

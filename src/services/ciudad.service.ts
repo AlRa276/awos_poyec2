@@ -1,7 +1,10 @@
 import { ciudadRepository } from '@/repositories/ciudad.repository';
 import { AppError } from '@/lib/errors';
 import { CreateCiudadDTO, UpdateCiudadDTO } from '@/models/ciudad.model';
-import { geocodeCiudad } from '@/lib/climaMicroservicio';
+import {
+  geocodeCiudad,
+  getClimaActual as getClimaActualMicroservicio,
+} from '@/lib/climaMicroservicio';
 
 const findOwnedOrFail = async (id: number, idUsuario: number) => {
   const ciudad = await ciudadRepository.findById(id);
@@ -57,5 +60,13 @@ export const ciudadService = {
   delete: async (id: number, idUsuario: number) => {
     await findOwnedOrFail(id, idUsuario);
     await ciudadRepository.delete(id);
+  },
+
+  getClimaActual: async (id: number, idUsuario: number) => {
+    const ciudad = await findOwnedOrFail(id, idUsuario);
+    if (ciudad.lat === null || ciudad.lon === null) {
+      throw new AppError('Esta ciudad todavía no tiene coordenadas geocodificadas', 409);
+    }
+    return getClimaActualMicroservicio({ lat: Number(ciudad.lat), lon: Number(ciudad.lon) });
   },
 };
