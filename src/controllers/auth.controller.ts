@@ -41,10 +41,12 @@ export const authController = {
           detail: `Bienvenido de nuevo, ${usuario.name}`,
         }
       );
+      
+      // CAMBIO AQUÍ: Configuración para cookies cross-site (localhost -> Railway)
       response.cookies.set('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: true,      // Forzado a true para que funcione con sameSite 'none'
+        sameSite: 'none',  // Permite compartir la cookie entre dominios distintos
         path: '/',
       });
       return response;
